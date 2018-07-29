@@ -82,7 +82,7 @@ int main()
       next = holdingList->nextPtr;
       printf("%s%s\n", "Current: ", current->data);
       printf("%s%s\n", "Next: ", next->data);
-      char addedHash[40];
+      char addedHash[100];
 
       uint8_t results[20];
       int n = strlen(current->data);
@@ -91,15 +91,21 @@ int main()
 
       for(int i = 0; i< 20; i++)
       {
-        printf("%01x", results[i]);
-        addedHash[i] = (char)results[i];
-      }
-      printf("\n");
+        printf("%02x", results[i]); //hex code!
 
-      for(int i = 0; i< 20; i++)
-      {
-        printf("%01x", addedHash[i]);
+      //  addedHash[i] = (char)results[i];
       }
+      char firstResult[50], secondResult[50];
+      sprintf(firstResult, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\0",
+        results[0], results[1], results[2], results[3], results[4], results[5], results[6], results[7], results[8], results[9],
+        results[10], results[11], results[12], results[13], results[14], results[15], results[16], results[17], results[18], results[19]);
+
+      printf("\nFirstResult: %s\n", firstResult);
+      // printf("\nresults numeric values:\n");
+      // for(int i = 0; i< 20; i++)
+      // {
+      //   printf("%u\n", results[i]);
+      // }
       printf("\n");
 
       if(next != NULL)
@@ -108,24 +114,31 @@ int main()
         SHA1Update(&sha, (uint8_t *)next->data, n);
         SHA1Final(results, &sha);
 
-        for(int i = 20; i< 40; i++)
-        {
-          addedHash[i] = (char)results[i-20];
-        }
+        sprintf(secondResult, "%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x\0",
+          results[0], results[1], results[2], results[3], results[4], results[5], results[6], results[7], results[8], results[9],
+          results[10], results[11], results[12], results[13], results[14], results[15], results[16], results[17], results[18], results[19]);
+
+        // for(int i = 20; i< 40; i++)
+        // {
+        //   addedHash[i] = (char)results[i-20];
+        // }
+      }
+        sprintf(addedHash, "%s%s", firstResult, secondResult);
         n = strlen(addedHash);
         SHA1Update(&sha, (uint8_t *)addedHash, n);
         SHA1Final(results, &sha);
-      }
 
-      char hashResult[20];
-      for(int i = 0; i< 20; i++)
-      {
-        hashResult[i] = (char)results[i];
-        printf("%01x", hashResult[i]);
-      }
-      printf("\n");
 
-      insertItem(&newList, hashResult);
+      // char hashResult[20];
+      // for(int i = 0; i< 20; i++)
+      // {
+      //   hashResult[i] = (char)results[i];
+      //   // printf("%02x", hashResult[i]);
+      // }
+      // printf("\n");
+
+      // insertItem(&newList, hashResult);
+      insertItem(&newList, addedHash);
 
       if(next != NULL)
       {
